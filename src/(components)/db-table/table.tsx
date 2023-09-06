@@ -2,6 +2,7 @@
 "use client"
 import { useState } from "react";
 import { styles } from "../../helpersUniversal/tsStyles";
+import TableSelect from "./db-tableselect";
 
 // <> Types used wihen working with tables
 export type list = number;
@@ -9,7 +10,7 @@ export type listMulti = number;
 export type tableData = undefined | string | number | boolean | list | listMulti;
 export type fieldType = "string" | "number" | "boolean" | "list" | "list-multi" | "uid";
 export type field = {
-	matchID: string;
+matchID: string;
 	labelText: string;
 	type: fieldType;
 	defaultValue?: tableData;
@@ -45,19 +46,16 @@ export default function Table(props: propsTable) {
 	// ---------------------------------------------
 	// <> Table helper functions
 	// ---------------------------------------------
-	// <> Functions for building the tables
-	// function should(input: tableData): boolean {
-	// 	if (typeof (input) !== "boolean") return false
-	// 	else return input;
-	// }
 
 	// <> Various cells: Display, Checkbox, and buttons
 	function cellDisplay(indexCell: string, contentsCell: tableData, matchID: string, labeltext: string) {
 		if (typeof (contentsCell) === "boolean") return cellCheck(indexCell, contentsCell as boolean, matchID, labeltext)
 		return <td className={styles.roomy} key={indexCell}> {contentsCell} </td>;
 	}
-
-	function cellInput(indexCell: string, contentsCell: tableData, typeCell: fieldType, matchID: string, labeltext: string, disabled?: boolean, cssClasses?: string, typingF?: (arg0: any) => void) {
+	/**
+	* A cell for inputting data appropriately
+	*/
+	function cellInput(indexCell: string, contentsCell: tableData, typeCell: fieldType, matchID: string, labeltext: string, disabled?: boolean, cssClasses?: string, onChange?: (arg0: any) => void) {
 		const classString = cssClasses + " " + styles.fields
 		// if(disabled===undefined){}
 		switch (typeCell) {
@@ -71,7 +69,7 @@ export default function Table(props: propsTable) {
 				<input type="number" key={indexCell + '-input'} name={matchID} id={matchID} defaultValue={contentsCell as number} className={classString + ` w-min `} disabled={disabled} />
 				<label key={indexCell + '-label'} className="collapse" htmlFor={matchID}>{labeltext}</label>
 			</td>;
-			case 'list': return <td className={styles.roomy} key={indexCell}> {contentsCell} </td>;
+			case 'list': return <td className={styles.roomy} key={indexCell}> <TableSelect label={labeltext} options={[]} selectedOption={0} onChange={undefined} /> </td>;
 			case 'list-multi': return <td className={styles.roomy} key={indexCell}> {contentsCell} </td>;
 			default: console.log(`Field type not implemented: ${typeCell}`); return <td key={indexCell}></td>
 		}
@@ -108,14 +106,14 @@ export default function Table(props: propsTable) {
 		)
 	}
 
-
+	
 	function displayRow(indexRow: number, rowValues: tableData[], isEditing: boolean, fields: field[], cssClasses?: string) {
 		let indexCell = 0
 		if (isEditing) return editRow(indexRow, fields, false, rowValues, cssClasses)
 		else return (<tr key={`row#${indexRow}`} className={cssClasses}>
 			{/* Display cells */}
 			{rowValues.map((element, index) => {
-				const thisField = fields[index];
+const thisField = fields[index];
 				return cellDisplay(`cell#${indexRow}-${indexCell++}`, element, thisField.matchID, thisField.labelText);
 			})}
 			{editable && editButton(indexRow)}

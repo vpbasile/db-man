@@ -3,7 +3,7 @@ import { styles } from "../../helpersUniversal/tsStyles";
 import { eType } from "../../helpersUniversal/usefulTypes";
 import TableSelect, { optionForDropdown } from "../db-table/db-tableselect";
 import Table from "../db-table/table";
-import { headersForPurchases } from "./defs";
+import { headersForPurchases, spoofData } from "./defs";
 // https://tailwind-elements.com/docs/standard/forms/select/
 
 
@@ -78,6 +78,9 @@ export default function EnterPurchase() {
         // Reset other form fields.
     };
 
+    let headersWithLists = [...headersForPurchases]
+    
+
     return (
         <div className={styles.bubble + styles.spacious}>
             <h2>Add New Purchase</h2>
@@ -94,7 +97,7 @@ export default function EnterPurchase() {
                     />
                 </label> */}
 
-                <Table dataContents={[]} fields={headersForPurchases} editable={true} />
+                <Table dataContents={spoofData} fields={headersWithLists} editable={true} />
 
 
                 <TableSelect label={"Product"} options={productOptions} selectedOption={selectedProduct} onChange={handleProductChange} />

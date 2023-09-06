@@ -8,16 +8,18 @@ export default function TableSelect(props: { label: string, options: optionForDr
     const selectedOption = props.selectedOption;
     let optionKey = 0;
     return (
-        <label>
+        <>
+        <label className="hidden">
             {props.label}:
-            {/* <select
-                options={options}
-                value={options.find((option) => option.value === selectedOption)?.value}
-                onChange={props.onChange}
-            /> */}
+        </label>
             <select className={styles.select}>
                 {options.map(option => { return (<option key={++optionKey}>{option.label}</option>) })}
             </select>
-        </label>
+        </>
     )
 }
+{/* <select
+    options={options}
+    value={options.find((option) => option.value === selectedOption)?.value}
+    onChange={props.onChange}
+/> */}
