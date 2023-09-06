@@ -18,5 +18,6 @@ export const styles = {
 	, hexBoardForm: "p-4 m-4 "
 	, playingCard: "p-8 m-8 border rounded border-gray-600"
 	// , paragraph: ``
-	, select: "bg-black border-t border-b bor px-1 m-1 border-blue-400"
-	}
+	, select: "bg-black border-t border-b px-1 m-1 border-blue-400"
+	, blueInput: "bg-black border-t border-b border-blue-400 px-1 m-1 w-2/3"
+}

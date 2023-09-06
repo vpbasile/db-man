@@ -7,7 +7,6 @@ import { styles } from './helpersUniversal/tsStyles';
 
 // <>DATA<>
 import EditLists from "./(components)/grocery/editLists";
-import EnterPurchase from "./(components)/grocery/enterPurchase";
 import Logo from "./helpersUniversal/logo";
 import DisplayPurchase from "./(components)/grocery/displayPurchase";
 
@@ -59,7 +58,8 @@ export default function App() {
   // <> Main return
   return (
     <main className="flex flex-col items-center justify-between p-24 ">
-      <div className="w-[65%]">
+      {/* <div className="w-[65%]"> */}
+      <div className="w-full">
         <h1 className={styles.reallyBig}>DBman Database Viewer</h1>
         <div id="logStrip" className="w-100 flex justify-center">
           <Logo url={"/dbvb.svg"} />

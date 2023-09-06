@@ -1,10 +1,19 @@
 import { useState } from "react";
 import { styles } from "../../helpersUniversal/tsStyles";
-import Table from "../db-table/table";
+import Table, { fieldTuples, tableData } from "../db-table/table";
 import { spoofData, headersForPurchases } from "./defs";
 
 export default function DisplayPurchase() {
 	// <> Step 1 - Define types
+	type rowType = tableData[];
+	type dbResponse = { error: any; } | {
+		serverUpSince: string;
+		baseURL: string;
+		tableName: string;
+		rowsReturned: number;
+		dbFields: fieldTuples;
+		dbRows: rowType;
+	};
 
 	// ---------------------------------------------
 	// <> Step 2 - Initialize some values
@@ -13,13 +22,14 @@ export default function DisplayPurchase() {
 
 	// States for storage and display
 
-	const [tableFields, SETtableFields] = useState(headersForPurchases)
+	const [tableFields, SETtableFields] = useState<fieldTuples>(headersForPurchases)
 	const [tableRows, SETtableRows] = useState(spoofData);
 	const DBURL = "http://localhost:8000/purchase"
 	const queryDB = (DBURL: string): void => {
 		console.log(("Attempting to send query to " + DBURL));
 		fetch(DBURL).then(response => response.json()).then(
 			data => {
+				// console.log("Response from server", data)
 				SETtableFields(data.dbFields)
 				SETtableRows(data.dbRows)
 			}
