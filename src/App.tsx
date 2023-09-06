@@ -24,8 +24,8 @@ export default function App() {
   // <> FIXME - THis hsould use a map instead of an array
   const modules: moduleType[] = []
   let makeUID = 0
-  modules.push({ uid: makeUID++, id: "displayPurchase", contents: <DisplayPurchase />, headerText: "Display Purchases" })
-  modules.push({ uid: makeUID++, id: 'enterPurchase', contents: <EnterPurchase />, headerText: "Enter Purchase" })
+  modules.push({ uid: makeUID++, id: "displayPurchase", contents: <DisplayPurchase />, headerText: "Purchases" })
+  // modules.push({ uid: makeUID++, id: 'enterPurchase', contents: <EnterPurchase />, headerText: "Enter Purchase" })
   modules.push({ uid: makeUID++, id: 'groceryEdit', contents: <EditLists />, headerText: "EditLists" })
 
   // <> Toolbar for selecting a module

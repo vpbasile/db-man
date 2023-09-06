@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { styles } from "../../helpersUniversal/tsStyles";
 
-type categoryDef = { category_id: string, category_name:string }
+type categoryDef = { category-id: string, category-name:string }
 
 function CategoryUI() {
     const [categories, setCategories] = useState<categoryDef[]>();
@@ -20,7 +20,7 @@ function CategoryUI() {
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ category_name: newCategory }),
+            body: JSON.stringify({ category-name: newCategory }),
         })
             .then(response => response.json())
             .then(data => {
@@ -31,8 +31,8 @@ function CategoryUI() {
             .catch(error => console.error(error));
     };
 
-    const handleDeleteCategory = (category_id: string) => {
-        fetch(`http://localhost:8000/categories/${category_id}`, {
+    const handleDeleteCategory = (category-id: string) => {
+        fetch(`http://localhost:8000/categories/${category-id}`, {
             method: "DELETE",
         })
             .then(response => response.json())
@@ -56,9 +56,9 @@ function CategoryUI() {
             <h2>Categories</h2>
             <ul>
                 {categories && categories.map(category => (
-                    <li key={category.category_id}>
-                        {category.category_name}
-                        <button onClick={() => handleDeleteCategory(category.category_id)}>
+                    <li key={category.category-id}>
+                        {category.category-name}
+                        <button onClick={() => handleDeleteCategory(category.category-id)}>
                             Delete
                         </button>
                     </li>

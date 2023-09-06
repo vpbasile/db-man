@@ -45,6 +45,6 @@ export default function DisplayPurchase() {
 	// ---------------------------------------------
 	return (<div className={styles.bubble + styles.spacious}>
 		<h2>Groceries</h2>
-		<Table dataContents={tableRows} fields={tableFields} />
+		<Table dataContents={tableRows} fields={tableFields} editable={true} />
 	</div>)
 }

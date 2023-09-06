@@ -1,6 +1,7 @@
 export const styles = {
 	spacious: "p-8 m-8 "
 	, roomy: "p-3 m-2 "
+	, myInput: "p-0 m-0"
 	, bubble: 'border-solid rounded-lg border border-blue-400 '
 	// Form
 	, button: " button rounded p-3 border min-w-full "

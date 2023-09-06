@@ -1,18 +1,18 @@
 import { tableData, field } from "../db-table/table";
 
-export const headersForPurchases: field[] = [
-    { matchID: "product_name", labelText: "Item", type: "list" },
-    { matchID: "total_purchase_price", labelText: "Total Price", type: "number" },
-    { matchID: "unit_name", labelText: "Unit", type: "string" },
-    { matchID: "unit_count", labelText: "Count", type: "number" },
-    { matchID: "venue_name", labelText: "Venue", type: "string" },
-    { matchID: "purchase_date", labelText: "Date", type: "string" },
-    { matchID: "category_name", labelText: "Category", type: "string" },
-    { matchID: "purchase_id", labelText: "UID", type: "uid" },
-];
+export const headersForPurchases = new Map<string, field>([
+    ["product-name", { labelText: "Item", type: "list", order: 1 }],
+    ["total-purchase-price", { labelText: "Total Price", type: "number", order: 2 }],
+    ["unit-name", { labelText: "Unit", type: "string", order: 3 }],
+    ["unit-count", { labelText: "Count", type: "number", order: 4 }],
+    ["venue-name", { labelText: "Venue", type: "string", order: 5 }],
+    ["purchase-date", { labelText: "Date", type: "string", order: 6 }],
+    ["category-name", { labelText: "Category", type: "string", order: 7 }],
+    ["purchase-id", { labelText: "UID", type: "uid", order: 8 }],
+]);
 
 export const spoofData: tableData[][] = [1, 2].map(row => {
-    return headersForPurchases.map(field => {
-        return (`Row ${row} ${field.labelText}`)
-    })
-})
+    return Array.from(headersForPurchases, ([matchID, field]) => {
+        return (`Row ${row} ${field.labelText}`);
+    });
+});

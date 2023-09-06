@@ -4,14 +4,14 @@ import { styles } from "../../helpersUniversal/tsStyles";
 import Table, { field, tableData } from "../db-table/table";
 
 export default function EditLists() {
-  const [tableFields, SETtableFields] = useState<field[]>([]);
+  const [tableFields, SETtableFields] = useState<FileList>();
   const [tableRows, SETtableRows] = useState<tableData[][]>([]);
   const [tableName, SETtableName] = useState<string>(""); // Used to determine which table's data to fetch
 
   const fetchTableData = (tableName: string): void => {
     const DBURL = `http://localhost:8000/${tableName}`;
     console.log("Attempting to send query to " + DBURL);
-    
+
     fetch(DBURL)
       .then(response => response.json())
       .then(data => {

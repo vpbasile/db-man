@@ -9,14 +9,14 @@ import { headersForPurchases, spoofData } from "./defs";
 
 
 export default function EnterPurchase() {
-    function translateProducts(data: { product_id: number, product_name: string }[]) {
-        const newArray = data.map(row => { return { value: row.product_id, label: row.product_name } })
+    function translateProducts(data: { product-id: number, product-name: string }[]) {
+        const newArray = data.map(row => { return { value: row.product-id, label: row.product-name } })
         return newArray
     }
 
 
     const spoofProducts = translateProducts(
-        [{ product_id: 1, product_name: "string" }, { product_id: 2, product_name: "More string" }]
+        [{ product-id: 1, product-name: "string" }, { product-id: 2, product-name: "More string" }]
     )
 
     // States to hold retrieved data
@@ -64,7 +64,7 @@ export default function EnterPurchase() {
         // Create a new purchase object with form data.
         const newPurchase = {
             product: selectedProduct,
-            total_purchase_price: totalPurchasePrice,
+            total-purchase-price: totalPurchasePrice,
             venue: selectedVenue,
             // Include other form fields here.
         };

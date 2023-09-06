@@ -10,19 +10,20 @@ export type listMulti = number;
 export type tableData = undefined | string | number | boolean | list | listMulti;
 export type fieldType = "string" | "number" | "boolean" | "list" | "list-multi" | "uid";
 export type field = {
-matchID: string;
 	labelText: string;
 	type: fieldType;
+	order: number;
 	defaultValue?: tableData;
 	changeFunction?: (arg0: any) => void;
 	listTable?: string;
 	// url?: URL;
 };
+type fieldList = Map<string, field>;
 
 // <> Define component props
 type propsTable = {
 	dataContents: tableData[][];
-	fields: field[];
+	fields: Map<string, field>;
 	editable?: boolean;
 	newRowF?: (arg0: any) => void;
 	// Pass down class
@@ -48,34 +49,47 @@ export default function Table(props: propsTable) {
 	// ---------------------------------------------
 
 	// <> Various cells: Display, Checkbox, and buttons
-	function cellDisplay(indexCell: string, contentsCell: tableData, matchID: string, labeltext: string) {
-		if (typeof (contentsCell) === "boolean") return cellCheck(indexCell, contentsCell as boolean, matchID, labeltext)
-		return <td className={styles.roomy} key={indexCell}> {contentsCell} </td>;
+	function cellDisplay(contentsCell: tableData, matchID: string, labeltext: string) {
+		if (typeof (contentsCell) === "boolean") return cellCheck(contentsCell as boolean, matchID, labeltext)
+		return <td className={styles.roomy} key={matchID}> {contentsCell} </td>;
 	}
 	/**
 	* A cell for inputting data appropriately
-	*/
-	function cellInput(indexCell: string, contentsCell: tableData, typeCell: fieldType, matchID: string, labeltext: string, disabled?: boolean, cssClasses?: string, onChange?: (arg0: any) => void) {
+	 *
+	 *
+	 * @param {tableData} contentsCell
+	 * @param {fieldType} typeCell
+	 * @param {string} matchID
+	 * @param {string} labeltext
+	 * @param {boolean} [disabled]
+	 * @param {string} [cssClasses]
+	 * @param {(arg0: any) => void} [onChange]
+	 * @return {*} 
+	 */
+	function cellInput(contentsCell: tableData, typeCell: fieldType, matchID: string, labeltext: string, disabled?: boolean, cssClasses?: string, onChange?: (arg0: any) => void) {
 		const classString = cssClasses + " " + styles.fields
+		const keyID = matchID + '-input';
 		// if(disabled===undefined){}
 		switch (typeCell) {
-			case undefined: return <td key={indexCell} className={styles.roomy}></td>
-			case 'boolean': return cellCheck(indexCell, contentsCell as boolean, matchID, labeltext)
-			case 'string': return <td key={indexCell} className={styles.roomy} >
-				<input key={indexCell + '-input'} name={matchID} id={matchID} defaultValue={contentsCell as string} className={classString} disabled={disabled} />
-				<label key={indexCell + '-label'} className="collapse" htmlFor={matchID}>{labeltext}</label>
+			case undefined: return <td key={keyID} className={styles.roomy}></td>
+			case 'boolean': return cellCheck(contentsCell as boolean, matchID, labeltext)
+			case 'string':
+				return <td key={keyID} className={styles.roomy} >
+					<input key={keyID} name={keyID} id={keyID} defaultValue={contentsCell as string} className={classString} disabled={disabled} />
+					<label key={keyID + '-label'} className="collapse" htmlFor={keyID}>{labeltext}</label>
+				</td>;
+			case "number": return <td key={keyID} className={styles.roomy} >
+				<input type="number" key={keyID + '-input'} name={keyID} id={keyID} defaultValue={contentsCell as number} className={classString + ` w-min `} disabled={disabled} />
+				<label key={keyID + '-label'} className="collapse" htmlFor={keyID}>{labeltext}</label>
 			</td>;
-			case "number": return <td key={indexCell} className={styles.roomy} >
-				<input type="number" key={indexCell + '-input'} name={matchID} id={matchID} defaultValue={contentsCell as number} className={classString + ` w-min `} disabled={disabled} />
-				<label key={indexCell + '-label'} className="collapse" htmlFor={matchID}>{labeltext}</label>
-			</td>;
-			case 'list': return <td className={styles.roomy} key={indexCell}> <TableSelect label={labeltext} options={[]} selectedOption={0} onChange={undefined} /> </td>;
-			case 'list-multi': return <td className={styles.roomy} key={indexCell}> {contentsCell} </td>;
-			default: console.log(`Field type not implemented: ${typeCell}`); return <td key={indexCell}></td>
+			case 'list': return <td className={styles.roomy} key={keyID}> <TableSelect label={labeltext} options={[]} selectedOption={0} onChange={undefined} /> </td>;
+			case 'list-multi': return <td className={styles.roomy} key={keyID}> {contentsCell} </td>;
+			default: console.log(`Field type not implemented: ${typeCell}`); return <td key={keyID}></td>
 		}
 
 	}
-	function cellCheck(indexCell: string, value: boolean, matchID: string, labeltext: string) {
+	function cellCheck(value: boolean, matchID: string, labeltext: string) {
+		const indexCell = matchID + '-check'
 		return <td key={indexCell}>
 			<input type="checkbox" id={matchID} name={matchID} defaultChecked={value} />
 			<label htmlFor={matchID} className="collapse">{labeltext}</label>
@@ -106,42 +120,48 @@ export default function Table(props: propsTable) {
 		)
 	}
 
-	
-	function displayRow(indexRow: number, rowValues: tableData[], isEditing: boolean, fields: field[], cssClasses?: string) {
-		let indexCell = 0
+	function dataRow(indexRow: number, rowValues: tableData[], isEditing: boolean, fields: fieldList, cssClasses?: string) {
+		const iterableFields = Array.from(fields.entries())
 		if (isEditing) return editRow(indexRow, fields, false, rowValues, cssClasses)
 		else return (<tr key={`row#${indexRow}`} className={cssClasses}>
 			{/* Display cells */}
-			{rowValues.map((element, index) => {
-const thisField = fields[index];
-				return cellDisplay(`cell#${indexRow}-${indexCell++}`, element, thisField.matchID, thisField.labelText);
+			{iterableFields.map(([fieldId, field], index) => {
+				return cellDisplay(rowValues[index], fieldId, field.labelText)
 			})}
 			{editable && editButton(indexRow)}
 		</tr>)
 	}
+	/**
+	* A row containing appropriate fields for each column.  If it's an existing rowm the fields are populated with data.  If it's new...
+	*/
 
-	function editRow(indexRow: number, fields: field[], disabled?: boolean, rowValues?: tableData[], cssClasses?: string) {
+	function editRow(indexRow: number, fields: fieldList, disabled?: boolean, rowValues?: tableData[], cssClasses?: string) {
+		const iterable = Array.from(fields.entries())
 		let newRow: tableData[]
 		// If an existing record was passed in, populate the fields with it.
 		if (rowValues) { newRow = rowValues; }
 		// If nothing was passed in, then populate it with the default values of each field.
-		else { newRow = fields.map(eachField => eachField.defaultValue) }
+		else {
+			newRow = Array.from(fields).map(val => { return val[1].defaultValue })
+		}
 		// Now that the data is all square, display it.
 		let fieldCount = 0;
 		if (!disabled) cssClasses += " border border-white";
 		return (<tr key={indexRow} className={cssClasses}>
-			{fields.map((thisField, index) => {
-				if (thisField.type === "uid") return <td key={fieldCount++}>UID</td>
-				return cellInput(`cell-${fieldCount++}`, newRow[index], thisField.type, thisField.matchID, thisField.labelText);
+			{iterable.map((thisField, index) => {
+				const [fieldName, fieldProfile] = thisField
+
+				if (fieldName === "uid") return <td key={fieldCount++}>UID</td>
+				return cellInput(newRow[index], fieldProfile.type, fieldName, fieldProfile.labelText);
 			})}
 			{submitCell(fieldCount)}
 		</tr>)
 	}
 
-	function createRow(indexRow: number, fields: field[], cssClasses?: string) {
+	function createRow(indexRow: number, fields: fieldList, cssClasses?: string) {
 		let indexCell = 0;
 		return (<tr key="createRow" className={cssClasses}>
-			{fields.map((thisField, index) => <td key={`row${indexRow}-col${indexCell++}`}></td>)}
+			{Array.from(fields.entries()).map((thisField, index) => <td key={`row${indexRow}-col${index}`}></td>)}
 			{buttonCell("New", () => selectForEdit(0), indexCell++)}
 		</tr>)
 	}
@@ -149,18 +169,19 @@ const thisField = fields[index];
 
 	// <>  Other prep steps for display
 
-	const dataHeaders = fields.map((eachField) => { return (eachField.labelText) })
+	// Turn the map of fields into 
+	const dataHeaders = Array.from(fields.values());
 
 	// <> Come back with the table
 	return (
 		<table className={`w-full table-auto ${props.cssClasses}`}>
-			{tableHeader(dataHeaders)}
+			{tableHeader(dataHeaders.map(field => field.labelText))}
 			<tbody>
 				{data.map((contentsRow) => {
 					const numIndex = indexRow++;
 					let cssClasses = ""
 					if (numIndex % 2 === 0) { cssClasses += "bg-slate-900" }  // Make this tranlucent
-					return displayRow(numIndex, contentsRow, (numIndex === isEditing), fields, cssClasses);
+					return dataRow(numIndex, contentsRow, (numIndex === isEditing), fields, cssClasses);
 				})}
 				{(isEditing === null && editable) && createRow(0, fields)}
 				{(isEditing === 0 && editable) && editRow(indexRow, fields)}
