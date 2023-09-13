@@ -47,7 +47,19 @@ export default function DisplayPurchase() {
 	const [purchaseDate, SETpurchaseDate] = useState<string>("");
 	const [selectedCategory, SETselectedCategory] = useState<number>(0);
 
+	function setTempData(rowid: number): void {
+		console.log(`Setting temp data from row ${rowid}`)
+		const rowToCopy = tableRows[rowid];
+		console.log(`RowToCopy`, rowToCopy)
+		//Take the selected record and put it's values into the temp items
+		SETselectedProduct(+rowToCopy[0]);
+		SETenteredPrice(+rowToCopy[1])
+		SETcount(+rowToCopy[2])
+		SETselectedVenue(+rowToCopy[3])
+		SETpurchaseDate(rowToCopy[4] as string)
+		SETselectedCategory(+rowToCopy[5])
 
+	}
 
 	const handlerBundle: handlerTuple[] = [
 		["product_name", { state: selectedProduct, setter: SETselectedProduct, translator: translateChoices }],
@@ -62,7 +74,6 @@ export default function DisplayPurchase() {
 	// <> Translation functions
 	// ---------------------------------------------
 	function translateChoices(fieldName: string, choices: mysteryObject[]): optionForDropdown[] {
-		console.log(`Translating ${fieldName}`)
 		switch (fieldName) {
 			case "product_name": return choices.map((eachChoice) => { return ({ value: eachChoice.product_id as number, label: eachChoice.product_name as string }) })
 			case "venue_name": return choices.map((eachChoice) => { return ({ value: eachChoice.venue_id as number, label: eachChoice.venue_name as string }) })
@@ -76,6 +87,9 @@ export default function DisplayPurchase() {
 	// <> Main Loop
 	// ---------------------------------------------
 	// ---------------------------------------------
+	// <> FIXME - Need to start working with JSON-only on the fromt end.  The table translation should only happen inside the table component.
+	// ---------------------------------------------
+	// ---------------------------------------------
 	// <> From ChatGPT:
 	//   Conditional Fetching: You are conditionally fetching data if tableRows is equal to spoofData. 
 	// While this works, it might be clearer to directly fetch the data unconditionally using an useEffect hook with an empty dependency array.
@@ -87,6 +101,7 @@ export default function DisplayPurchase() {
 	// ---------------------------------------------
 	return (<div className={styles.bubble + styles.spacious}>
 		<h2>Groceries</h2>
-		<Table dataContents={tableRows} fields={tableFields} handlers={handlerBundle} editable={false} />
+		<Table dataContents={tableRows} fields={tableFields} handlers={handlerBundle} editable={true} setTempData={setTempData} />
 	</div>)
+
 }

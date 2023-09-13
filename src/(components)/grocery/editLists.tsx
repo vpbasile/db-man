@@ -29,7 +29,7 @@ export default function EditLists() {
     }
   }, [tableName]);
 
-  const handleTableSelect = (selectedTable: string) => {
+  const handleListSelect = (selectedTable: string) => {
     SETtableName(selectedTable);
   };
 
@@ -37,9 +37,9 @@ export default function EditLists() {
     <div className={styles.bubble + styles.spacious}>
       <h2>Edit Lists</h2>
       <div>
-        <button className={styles.button} onClick={() => handleTableSelect("category")}>Category</button>
-        <button className={styles.button} onClick={() => handleTableSelect("product")}>Product</button>
-        <button className={styles.button} onClick={() => handleTableSelect("venue")}>Venue</button>
+        <button className={styles.button} onClick={() => handleListSelect("category")}>Category</button>
+        <button className={styles.button} onClick={() => handleListSelect("product")}>Product</button>
+        <button className={styles.button} onClick={() => handleListSelect("venue")}>Venue</button>
       </div>
       <h2>Content:</h2>
       {tableFields.length > 0 && (
