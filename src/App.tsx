@@ -72,6 +72,7 @@ export default function App() {
         <div className={styles.bubble + styles.spacious}>
           <ul className="list-disc list-inside">
             <h2 className={styles.h3}>To Fix</h2>
+            <li>Get things working with the dropdown menus</li>
             <li>Work with GPT to call the create route</li>
             <li>Find the FIXME tag</li>
             <li>Figure out why I can't edit the last row.  Must be an off-by-one error</li>
