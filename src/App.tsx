@@ -35,7 +35,7 @@ export default function App() {
   //     else buttonStyle = cssClasses + buttonStyle;
   //   }
   //   return (
-  //     <li key={`button-${uid}`} className="mr-6">
+  //     <li key={`button-${uid}`} className="mr-6">  
   //       <button key={uid} onClick={() => {
   //         SETselectedModule(uid);
   //       }} className={buttonStyle}>{eachModule.headerText}</button>
@@ -59,7 +59,7 @@ export default function App() {
       {/* <div className="w-[65%]"> */}
       <div className="w-full">
         <h1 className={styles.reallyBig}>DBman Database Viewer</h1>
-        <div id="logStrip" className="w-100 flex justify-center">
+        <div id="logoStrip" className="w-100 flex justify-center">
           <Logo url={"/dbvb.svg"} />
           <Logo url={"/react.svg"} />
           <Logo url={"/Tailwind_CSS_Logo.svg"} >
@@ -72,6 +72,7 @@ export default function App() {
         <div className={styles.bubble + styles.spacious}>
           <ul className="list-disc list-inside">
             <h2 className={styles.h3}>To Fix</h2>
+            <li>Get things working with the dropdown menus</li>
             <li>Work with GPT to call the create route</li>
             <li>Find the FIXME tag</li>
             <li>Figure out why I can't edit the last row.  Must be an off-by-one error</li>

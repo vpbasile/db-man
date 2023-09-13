@@ -39,7 +39,7 @@ type propsTable = {
 	dataContents: tableData[][];
 	fields: fieldTuple[];
 	editable?: boolean;
-	setTempData: (rowid: number) => void;
+	setTempData?: (rowid: number) => void;
 	handlers?: handlerTuple[]
 	newRowF?: (arg0: any) => void;
 	// Pass down class
@@ -135,9 +135,10 @@ export default function Table(props: propsTable) {
 	// <> Table rows
 	function tableHeader(headers: tableData[]) {
 		// console.log("headers", headers)
+		const rowKey = "thisHouldBeTheTableName-header"
 		return (
-			<thead>
-				<tr>
+			<thead id={rowKey}>
+				<tr key={rowKey} id={rowKey}>
 					{headers.map(eachOne => { return (<th key={`header-${eachOne}`} className="text-left">{eachOne}</th>) })}
 				</tr>
 			</thead>
@@ -145,9 +146,10 @@ export default function Table(props: propsTable) {
 	}
 
 	function dataRow(indexRow: number, rowValues: tableData[], isEditing: boolean, fields: fieldTuple[], cssClasses?: string) {
+		const rowKey = `row-${indexRow}`;
 		const iterableFields = Array.from(fields.entries())
 		if (isEditing) return editRow(indexRow, fields, handlers as handlerTuple[], false, rowValues, cssClasses)
-		else return (<tr key={`row#${indexRow}`} className={cssClasses}>
+		else return (<tr key={rowKey} id={rowKey} className={cssClasses}>
 			{/* Display cells */}
 			{iterableFields.map(([index, tuple]) => {
 				return cellDisplay(rowValues[index], tuple[0], tuple[1].labelText)
@@ -160,6 +162,7 @@ export default function Table(props: propsTable) {
 	*/
 
 	function editRow(indexRow: number, fields: fieldTuple[], handlers: handlerTuple[], disabled?: boolean, rowValues?: tableData[], cssClasses?: string) {
+		const rowKey = `row-${indexRow}`;
 		// console.log("fields", fields)
 		const iterable = Array.from(fields.entries())
 		let newRow: tableData[]
@@ -168,7 +171,7 @@ export default function Table(props: propsTable) {
 		// Now that the data is all square, display it.
 		let fieldCount = 0;
 		if (!disabled) cssClasses += " border-l border-r border-white";
-		return (<tr key={indexRow} className={cssClasses}>
+		return (<tr key={rowKey} id={rowKey} className={cssClasses}>
 			{iterable.map(([fieldIndex, fieldTuple]) => {
 				const matchID = fieldTuple[0];
 				const handlersForThis = (handlers.find((eachRow) => { return (eachRow[0] === matchID) }) || ['nothing', null])[1]
@@ -191,8 +194,9 @@ export default function Table(props: propsTable) {
 	}
 
 	function createRow(indexRow: number, fields: fieldTuple[], cssClasses?: string) {
+		const rowKey = "createRow";
 		let indexCell = 0;
-		return (<tr key="createRow" className={cssClasses}>
+		return (<tr key={rowKey} id={rowKey} className={cssClasses}>
 			{Array.from(fields.entries()).map((_thisField, index) => <td key={`row${indexRow}-col${index}`}></td>)}
 			{cellButton("New", () => selectForEdit(0), indexCell++)}
 		</tr>)
@@ -200,8 +204,9 @@ export default function Table(props: propsTable) {
 	const fieldNames: string[] = [...fields.entries()].map((thisField) => { return (thisField[1][1].labelText) })
 	// console.log("fields", fields, "fieldNames", fieldNames)
 	// <> Come back with the table
+	const tableID = "thisHouldBeTheTableName"
 	return (
-		<table className={`w-full table-auto ${props.cssClasses}`}>
+		<table id={tableID} className={`w-full table-auto ${props.cssClasses}`}>
 			{tableHeader(fieldNames)}
 
 			<tbody>
