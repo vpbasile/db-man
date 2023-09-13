@@ -39,7 +39,7 @@ type propsTable = {
 	dataContents: tableData[][];
 	fields: fieldTuple[];
 	editable?: boolean;
-	setTempData: (rowid: number) => void;
+	setTempData?: (rowid: number) => void;
 	handlers?: handlerTuple[]
 	newRowF?: (arg0: any) => void;
 	// Pass down class

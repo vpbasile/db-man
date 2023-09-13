@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { styles } from "../../helpersUniversal/tsStyles";
-import Table, { fieldTuple, handlerTuple, mysteryObject, tableData } from "../db-table/table";
-import { spoofData, headersForPurchases } from "./defs";
-import { optionForDropdown } from "../db-table/db-tableselect";
+import Table, { fieldTuple, handlerTuple, mysteryObject } from "../db-man/table";
+import { spoofData, headersForPurchases, purchasesToTable, purchaseType } from "./defs";
+import { optionForDropdown } from "../db-man/db-tableselect";
 
 export default function DisplayPurchase() {
+
+
 	// <> Step 1 - Define types
 	type dbResponse = {
 		serverUpSince: string;
@@ -12,7 +14,7 @@ export default function DisplayPurchase() {
 		tableName: string;
 		rowsReturned: number;
 		dbFields: fieldTuple[];
-		dbRows: tableData[][];
+		dbRows: purchaseType[];
 	};
 
 	// ---------------------------------------------
@@ -45,20 +47,17 @@ export default function DisplayPurchase() {
 	const [count, SETcount] = useState<number>(0);
 	const [selectedVenue, SETselectedVenue] = useState<number>(0);
 	const [purchaseDate, SETpurchaseDate] = useState<string>("");
-	const [selectedCategory, SETselectedCategory] = useState<number>(0);
 
 	function setTempData(rowid: number): void {
-		console.log(`Setting temp data from row ${rowid}`)
+		// console.log(`Setting temp data from row ${rowid}`)
 		const rowToCopy = tableRows[rowid];
-		console.log(`RowToCopy`, rowToCopy)
+		// console.log(`RowToCopy`, rowToCopy)
 		//Take the selected record and put it's values into the temp items
-		SETselectedProduct(+rowToCopy[0]);
-		SETenteredPrice(+rowToCopy[1])
-		SETcount(+rowToCopy[2])
-		SETselectedVenue(+rowToCopy[3])
-		SETpurchaseDate(rowToCopy[4] as string)
-		SETselectedCategory(+rowToCopy[5])
-
+		SETselectedProduct(+rowToCopy.product_name);
+		SETenteredPrice(rowToCopy.total_purchase_price)
+		SETcount(rowToCopy.unit_count)
+		// SETselectedVenue(rowToCopy.venue_name)
+		SETpurchaseDate(rowToCopy.Purchase_date as string)
 	}
 
 	const handlerBundle: handlerTuple[] = [
@@ -67,7 +66,6 @@ export default function DisplayPurchase() {
 		["unit_count", { state: count, setter: SETcount }],
 		["venue_name", { state: selectedVenue, setter: SETselectedVenue, translator: translateChoices }],
 		["purchase_date", { state: purchaseDate, setter: SETpurchaseDate }],
-		["category_name", { state: selectedCategory, setter: SETselectedCategory, translator: translateChoices }],
 	]
 
 	// ---------------------------------------------
@@ -101,7 +99,7 @@ export default function DisplayPurchase() {
 	// ---------------------------------------------
 	return (<div className={styles.bubble + styles.spacious}>
 		<h2>Groceries</h2>
-		<Table dataContents={tableRows} fields={tableFields} handlers={handlerBundle} editable={true} setTempData={setTempData} />
+		<Table dataContents={purchasesToTable(tableRows)} fields={tableFields} handlers={handlerBundle} editable={true} setTempData={setTempData} />
 	</div>)
 
 }
