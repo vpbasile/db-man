@@ -21,6 +21,7 @@ export type field = {
 	changeFunction?: (arg0: any) => void;
 	listTable?: string;
 	choices?: optionForDropdown[]
+	displayKey?: string;
 	// url?: URL;
 };
 export type fieldTuple = [string, field];
@@ -39,7 +40,7 @@ type propsTable = {
 	dataContents: tableData[][];
 	fields: fieldTuple[];
 	editable?: boolean;
-	setTempData?: (rowid: number) => void;
+	setTempData: (rowid: number) => void;
 	handlers?: handlerTuple[]
 	newRowF?: (arg0: any) => void;
 	// Pass down class
@@ -67,9 +68,10 @@ export default function Table(props: propsTable) {
 	// ---------------------------------------------
 
 	// <> Various cells: Display, Checkbox, and buttons
-	function cellDisplay(contentsCell: tableData, matchID: string, labeltext: string) {
+	function cellDisplay(contentsCell: tableData, matchID: string, labeltext: string, rowNum: number) {
+		const cellKey = `row${rowNum}-${matchID}`
 		if (typeof (contentsCell) === "boolean") return cellCheck(contentsCell as boolean, matchID, labeltext)
-		return <td className={styles.roomy} key={matchID}> {contentsCell} </td>;
+		return <td id={cellKey} className={styles.roomy} key={matchID}> {contentsCell} </td>;
 	}
 	/**
 	* A cell for inputting data appropriately
@@ -81,29 +83,29 @@ export default function Table(props: propsTable) {
 		const typeCell = fieldDef.type
 		const labeltext = fieldDef.labelText
 		const classString = cssClasses + " " + styles.blueInput
-		const keyID = matchID + '-input';
+		const keyID = `input-` + matchID;
 		// console.log("matchID", matchID, "type", typeCell, "contentsCell", contentsCell)
 		// if(disabled===undefined){}
 		switch (typeCell) {
-			case undefined: return <td key={keyID} className={styles.roomy}></td>
+			case undefined: return <td key={keyID} id={keyID} className={styles.roomy}>UND</td>
 			case 'boolean': return cellCheck(contentsCell as boolean, matchID, labeltext)
-			case "number": return <td key={keyID} className={styles.roomy} >
-				<input type="number" key={keyID} name={keyID} id={keyID} defaultValue={contentsCell as number} className={classString} disabled={disabled} onChange={onchange as setter} />
-				<label key={keyID + '-label'} className="hidden" htmlFor={keyID}>{labeltext}</label>
+			case "number": return <td key={keyID} id={keyID} className={styles.roomy} >
+				<input type="number" key={keyID} id={keyID} name={labeltext} defaultValue={contentsCell as number} className={classString} disabled={disabled} onChange={onchange as setter} />
+				<label key={keyID + '-label'} className="hidden" htmlFor={labeltext}>{labeltext}</label>
 			</td>;
 			case 'list': {
 				// console.log("Select list")
-				return <td className={styles.roomy} key={keyID}><ListSelect field={field} selectedOption={contentsCell as number} onChange={onChange as setter} translator={translator as optionTranslator} />
+				return <td className={styles.roomy} key={keyID} id={keyID}><ListSelect field={field} selectedOption={contentsCell as number} onChange={onChange as setter} translator={translator as optionTranslator} />
 				</td>;
 			}
-			case 'list-multi': return <td className={styles.roomy} key={keyID}>{contentsCell} </td>;
-			case 'string': return <td key={keyID} className={styles.roomy} >
-				<input key={keyID} name={keyID} id={keyID} defaultValue={contentsCell as string} className={classString} disabled={disabled} />
-				<label key={keyID + '-label'} className="hidden" htmlFor={keyID}>{labeltext}</label>
+			case 'list-multi': return <td className={styles.roomy} key={keyID} id={keyID}>{contentsCell} </td>;
+			case 'string': return <td key={keyID} id={keyID} className={styles.roomy} >
+				<input key={keyID} name={labeltext} id={keyID} defaultValue={contentsCell as string} className={classString} disabled={disabled} />
+				<label key={keyID + '-label'} className="hidden" htmlFor={labeltext}>{labeltext}</label>
 			</td>;
-			case 'uid': return <td key={keyID} className="uid">{contentsCell}</td>;
-			case 'lookedUp': return <td key={keyID} className="text-red-500">{contentsCell}zzz</td>;
-			default: console.log(`Field type not implemented: ${typeCell}`); return <td key={keyID}></td>
+			case 'uid': return <td key={keyID} id={keyID} className="uid">{contentsCell}</td>;
+			case 'lookedUp': return <td key={keyID} id={keyID} className="text-red-500">{contentsCell}zzz</td>;
+			default: console.log(`Field type not implemented: ${typeCell}`); return <td key={keyID} id={keyID}></td>
 		}
 
 	}
@@ -145,42 +147,44 @@ export default function Table(props: propsTable) {
 		)
 	}
 
-	function dataRow(indexRow: number, rowValues: tableData[], isEditing: boolean, fields: fieldTuple[], cssClasses?: string) {
-		const rowKey = `row-${indexRow}`;
+	function rowDisplay(rowNum: number, rowValues: tableData[], isEditing: boolean, fields: fieldTuple[], cssClasses?: string) {
+		const rowKey = `row-${rowNum}`;
 		const iterableFields = Array.from(fields.entries())
-		if (isEditing) return editRow(indexRow, fields, handlers as handlerTuple[], false, rowValues, cssClasses)
+		if (isEditing) return rowEdit(rowNum, fields, handlers as handlerTuple[], false, rowValues, cssClasses)
 		else return (<tr key={rowKey} id={rowKey} className={cssClasses}>
 			{/* Display cells */}
 			{iterableFields.map(([index, tuple]) => {
-				return cellDisplay(rowValues[index], tuple[0], tuple[1].labelText)
+				return cellDisplay(rowValues[index], tuple[0], tuple[1].labelText, rowNum)
 			})}
-			{editable && cellEditButton(indexRow)}
+			{editable && cellEditButton(rowNum)}
 		</tr>)
 	}
 	/**
 	* A row containing appropriate fields for each column.  If it's an existing rowm the fields are populated with data.  If it's new...
 	*/
 
-	function editRow(indexRow: number, fields: fieldTuple[], handlers: handlerTuple[], disabled?: boolean, rowValues?: tableData[], cssClasses?: string) {
-		const rowKey = `row-${indexRow}`;
+	function rowEdit(rowNum: number, fields: fieldTuple[], handlers: handlerTuple[], disabled?: boolean, rowValues?: tableData[], cssClasses?: string) {
+		const rowKey = `row-${rowNum}`;
 		// console.log("fields", fields)
 		const iterable = Array.from(fields.entries())
 		let newRow: tableData[]
 		if (rowValues) newRow = [...rowValues];  // If an existing record was passed in, populate the fields with it.
 		else newRow = [...iterable.map(val => { return val[1][1].defaultValue })] as tableData[] // If nothing was passed in, then populate it with the default values of each field.
 		// Now that the data is all square, display it.
-		let fieldCount = 0;
 		if (!disabled) cssClasses += " border-l border-r border-white";
 		return (<tr key={rowKey} id={rowKey} className={cssClasses}>
 			{iterable.map(([fieldIndex, fieldTuple]) => {
 				const matchID = fieldTuple[0];
 				const handlersForThis = (handlers.find((eachRow) => { return (eachRow[0] === matchID) }) || ['nothing', null])[1]
 				if (!handlersForThis) {
+					// FIXME - CONTINUE HERE - It's not finding the handlers - probably because I need to look at the new value I added to the category fields
+					console.log(`No handlers for ${matchID}`)
+					const cellKey = `input-${matchID}`;
 					// console.log(`No handlers for ${matchID}`); 
-					return <td key={fieldCount++}>{fieldTuple[1].defaultValue}</td>
+					return <td key={cellKey} id={cellKey}>{fieldTuple[1].defaultValue}</td>
 				}
 				else {
-					if (matchID === "uid") return <td key={fieldCount++}>UID</td>
+					if (matchID === "uid") return <td key={`edit-${matchID}`} id={`edit-${matchID}`}>UID</td>
 					const setter = handlersForThis.setter;
 					const translator = handlersForThis.translator;
 					// <><> I can't call the setter here  I have to do it somewehre else
@@ -189,15 +193,15 @@ export default function Table(props: propsTable) {
 				}
 			})}
 			{/* The row ends with a submit button */}
-			{cellSubmit(fieldCount)}
+			{cellSubmit(`row${rowNum}-submit`)}
 		</tr>)
 	}
 
-	function createRow(indexRow: number, fields: fieldTuple[], cssClasses?: string) {
+	function createRow(rowNum: number, fields: fieldTuple[], cssClasses?: string) {
 		const rowKey = "createRow";
 		let indexCell = 0;
 		return (<tr key={rowKey} id={rowKey} className={cssClasses}>
-			{Array.from(fields.entries()).map((_thisField, index) => <td key={`row${indexRow}-col${index}`}></td>)}
+			{Array.from(fields.entries()).map((_thisField, index) => <td key={`row${rowNum}-col${index}`}></td>)}
 			{cellButton("New", () => selectForEdit(0), indexCell++)}
 		</tr>)
 	}
@@ -214,10 +218,10 @@ export default function Table(props: propsTable) {
 					const numIndex = indexRow++;
 					let cssClasses = ""
 					if (numIndex % 2 === 0) { cssClasses += "bg-slate-900" }  // Make this tranlucent
-					return dataRow(numIndex, contentsRow, (numIndex === isEditing), fields, cssClasses);
+					return rowDisplay(numIndex, contentsRow, (numIndex === isEditing), fields, cssClasses);
 				})}
 				{(isEditing === null && editable) && createRow(0, fields)}
-				{(isEditing === 0 && editable) && editRow(indexRow, fields, handlers as handlerTuple[])}
+				{(isEditing === 0 && editable) && rowEdit(indexRow, fields, handlers as handlerTuple[])}
 			</tbody>
 		</table>
 	);

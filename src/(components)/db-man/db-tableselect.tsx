@@ -28,9 +28,9 @@ export default function ListSelect(props: propsType) {
             <label className="hidden" htmlFor={matchID}>
                 {fieldDef.labelText}:
             </label>
-            <select name={matchID} className={styles.select} onChange={(e) => {
+            <select name={matchID} className={styles.select} defaultValue={selectedOption} onChange={(e) => {
                 console.log(`Selected ${matchID}: ${e.target.value}`)
-                console.log(`onchange`,onchange)
+                console.log(`onchange`, onchange)
                 // onchange(e.target.value)
             }}>
                 {translatedOptions.map(option => {

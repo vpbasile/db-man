@@ -3,7 +3,7 @@ import { tableData, fieldTuple } from "../db-man/table";
 
 export type dbRowsType = { [key: string]: tableData }[];
 export type purchaseType = {
-    product_name: string;
+    product_id: number;
     total_purchase_price: number;
     unit_name: string;
     unit_count: number;
@@ -13,21 +13,21 @@ export type purchaseType = {
 }
 
 export const headersForPurchases: fieldTuple[] = ([
-    ["product_name", { labelText: "Item", type: "list", order: 1, matchID: "product-list", listTable: "product" }],
+    ["product_id", { labelText: "Item", type: "list", order: 1, matchID: "product-list", listTable: "product", displayKey: "product_name" }],
     ["total_purchase_price", { labelText: "Total Price", type: "number", order: 2, matchID: "total-price" }],
     ["unit_name", { labelText: "Unit", type: "lookedUp", order: 3, matchID: "unit-name" }],
     ["unit_count", { labelText: "Count", type: "number", order: 4, matchID: "unit-count" }],
-    ["venue_name", { labelText: "Venue", type: "list", order: 5, matchID: "venue-list", listTable: "venue" }],
+    ["venue_name", { labelText: "Venue", type: "list", order: 5, matchID: "venue-list", listTable: "venue", displayKey: "venue_name" }],
     ["purchase_date", { labelText: "Date", type: "string", order: 6, matchID: "purchase-date" }],
-    ["category_name", { labelText: "Category", type: "list", order: 7, matchID: "category", listTable: "category" }],
+    ["category_name", { labelText: "Category", type: "list", order: 7, matchID: "category", listTable: "category", displayKey: "category_name" }],
     ["purchase_id", { labelText: "UID", type: "uid", order: 8, matchID: "purchase-id" }],
 ]);
 
 export const spoofData: purchaseType[] = [1, 2].map(rowNum => {
     return {
-        product_name: "Database",
+        product_id: 1,
         total_purchase_price: 0.20,
-        unit_name: "query",
+        unit_name: "Database query",
         unit_count: rowNum,
         venue_name: "failed",
         Purchase_date: '2023-08-23',

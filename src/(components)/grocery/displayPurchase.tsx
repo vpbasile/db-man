@@ -30,7 +30,7 @@ export default function DisplayPurchase() {
 		console.log(("Attempting to send query to " + DBURL));
 		fetch(DBURL).then(response => response.json()).then(
 			(data: dbResponse) => {
-				// console.log("Response from server", data)
+				console.log("Response from server", data)
 				SETtableFields(data.dbFields)
 				SETtableRows(data.dbRows)
 			}
@@ -53,7 +53,7 @@ export default function DisplayPurchase() {
 		const rowToCopy = tableRows[rowid];
 		// console.log(`RowToCopy`, rowToCopy)
 		//Take the selected record and put it's values into the temp items
-		SETselectedProduct(+rowToCopy.product_name);
+		SETselectedProduct(+rowToCopy.product_id);
 		SETenteredPrice(rowToCopy.total_purchase_price)
 		SETcount(rowToCopy.unit_count)
 		// SETselectedVenue(rowToCopy.venue_name)
@@ -61,7 +61,7 @@ export default function DisplayPurchase() {
 	}
 
 	const handlerBundle: handlerTuple[] = [
-		["product_name", { state: selectedProduct, setter: SETselectedProduct, translator: translateChoices }],
+		["product_id", { state: selectedProduct, setter: SETselectedProduct, translator: translateChoices }],
 		["total_purchase_price", { state: enteredPrice, setter: SETenteredPrice }],
 		["unit_count", { state: count, setter: SETcount }],
 		["venue_name", { state: selectedVenue, setter: SETselectedVenue, translator: translateChoices }],
@@ -73,7 +73,7 @@ export default function DisplayPurchase() {
 	// ---------------------------------------------
 	function translateChoices(fieldName: string, choices: mysteryObject[]): optionForDropdown[] {
 		switch (fieldName) {
-			case "product_name": return choices.map((eachChoice) => { return ({ value: eachChoice.product_id as number, label: eachChoice.product_name as string }) })
+			case "product_id": return choices.map((eachChoice) => { return ({ value: eachChoice.product_id as number, label: eachChoice.product_name as string }) })
 			case "venue_name": return choices.map((eachChoice) => { return ({ value: eachChoice.venue_id as number, label: eachChoice.venue_name as string }) })
 			case "category_name": return choices.map((eachChoice) => { return ({ value: eachChoice.category_id as number, label: eachChoice.category_name as string }) })
 			default: return [{ value: 0, label: "label" }]
