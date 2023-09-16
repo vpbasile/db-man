@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { styles } from "../../helpersUniversal/tsStyles";
-import Table, { fieldTuple, handlerTuple, mysteryObject } from "../db-man/table";
+import DBTable, { fieldTuple, handlerTuple, mysteryObject } from "../db-man/table";
 import { spoofData, headersForPurchases, purchasesToTable, purchaseType } from "./defs";
 import { optionForDropdown } from "../db-man/db-tableselect";
+import { Box, Heading } from "@chakra-ui/react";
 
 export default function DisplayPurchase() {
 
@@ -97,9 +97,9 @@ export default function DisplayPurchase() {
 	// ---------------------------------------------
 	// <> Main return
 	// ---------------------------------------------
-	return (<div className={styles.bubble + styles.spacious}>
-		<h2>Groceries</h2>
-		<Table dataContents={purchasesToTable(tableRows)} fields={tableFields} handlers={handlerBundle} editable={true} setTempData={setTempData} />
-	</div>)
+	return (<Box>
+		<Heading as={'h2'}>Groceries</Heading>
+		<DBTable dataContents={purchasesToTable(tableRows)} fields={tableFields} handlers={handlerBundle} editable={true} setTempData={setTempData} />
+	</Box>)
 
 }

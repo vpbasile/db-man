@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
-import { styles } from "../../helpersUniversal/tsStyles";
-import Table, { field, tableData } from "../db-man/table";
+import { tableData } from "../db-man/table";
+import DBTable from "../db-man/table";
 
 export default function EditLists() {
   const [tableFields, SETtableFields] = useState<FileList>();
@@ -34,16 +34,16 @@ export default function EditLists() {
   };
 
   return (
-    <div className={styles.bubble + styles.spacious}>
+    <div>
       <h2>Edit Lists</h2>
       <div>
-        <button className={styles.button} onClick={() => handleListSelect("category")}>Category</button>
-        <button className={styles.button} onClick={() => handleListSelect("product")}>Product</button>
-        <button className={styles.button} onClick={() => handleListSelect("venue")}>Venue</button>
+        <button onClick={() => handleListSelect("category")}>Category</button>
+        <button onClick={() => handleListSelect("product")}>Product</button>
+        <button onClick={() => handleListSelect("venue")}>Venue</button>
       </div>
       <h2>Content:</h2>
       {tableFields.length > 0 && (
-        <Table dataContents={tableRows} fields={tableFields} />
+        <DBTable dataContents={tableRows} fields={tableFields} />
       )}
     </div>
   );

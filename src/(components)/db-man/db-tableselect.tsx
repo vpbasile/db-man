@@ -1,4 +1,3 @@
-import { styles } from "../../helpersUniversal/tsStyles";
 import { fieldTuple, mysteryObject, optionTranslator, setter } from "./table";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -9,7 +8,6 @@ type propsType = {
     selectedOption: number;
     onChange: setter;
     translator: optionTranslator;
-    cssClasses?: string;
 };
 
 export default function ListSelect(props: propsType) {
@@ -25,10 +23,10 @@ export default function ListSelect(props: propsType) {
     let i = 0;
     return (
         <>
-            <label className="hidden" htmlFor={matchID}>
+            <label htmlFor={matchID}>
                 {fieldDef.labelText}:
             </label>
-            <select name={matchID} className={styles.select} defaultValue={selectedOption} onChange={(e) => {
+            <select name={matchID} defaultValue={selectedOption} onChange={(e) => {
                 console.log(`Selected ${matchID}: ${e.target.value}`)
                 console.log(`onchange`, onchange)
                 // onchange(e.target.value)

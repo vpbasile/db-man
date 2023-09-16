@@ -3,12 +3,15 @@
 import "./globals.css"
 
 // import { useState } from 'react';
-import { styles } from './helpersUniversal/tsStyles';
 
 // <>DATA<>
 import EditLists from "./(components)/grocery/editLists";
 import Logo from "./helpersUniversal/logo";
 import DisplayPurchase from "./(components)/grocery/displayPurchase";
+import ColorModeButton from "./(components)/colorModeButton";
+import { Box, Center, Heading } from "@chakra-ui/react";
+import AppRow from "./(components)/appRow";
+import TodoList from "./(components)/TodoList";
 
 export default function App() {
 
@@ -26,20 +29,14 @@ export default function App() {
   modules.push({ uid: makeUID++, id: 'groceryEdit', contents: <EditLists />, headerText: "EditLists" })
 
   // <> Toolbar for selecting a module
-  // function toolbarButton(eachModule: moduleType, cssClasses?: string) {
+  // function toolbarButton(eachModule: moduleType) {
   //   const uid = eachModule.uid;
-  //   let buttonStyle = styles.button + styles.roomy;
-  //   if (uid === selectedModule) { buttonStyle = `ring-8 ring-inset ` + buttonStyle; }
-  //   else {
-  //     if (cssClasses === undefined) buttonStyle = "text-blue-500 " + buttonStyle
-  //     else buttonStyle = cssClasses + buttonStyle;
-  //   }
   //   return (
-  //     <li key={`button-${uid}`} className="mr-6">  
+  //     <ListItem key={`button-${uid}`} className="mr-6">  
   //       <button key={uid} onClick={() => {
   //         SETselectedModule(uid);
   //       }} className={buttonStyle}>{eachModule.headerText}</button>
-  //     </li>
+  //     </ListItem>
   //   );
   // }
 
@@ -55,35 +52,28 @@ export default function App() {
 
   // <> Main return
   return (
-    <main className="flex flex-col items-center justify-between p-24 ">
-      {/* <div className="w-[65%]"> */}
-      <div className="w-full">
-        <h1 className={styles.reallyBig}>DBman Database Viewer</h1>
-        <div id="logoStrip" className="w-100 flex justify-center">
-          <Logo url={"/dbvb.svg"} />
-          <Logo url={"/react.svg"} />
-          <Logo url={"/Tailwind_CSS_Logo.svg"} >
-            <h2>with <a href='https://tailwindcss.com/' className='' >tailwind</a></h2>
-            (<a href={"https://tailwindcomponents.com/cheatsheet/"}>cheat sheet</a>)
-          </Logo>
-          <Logo url={"/vite.svg"} />
-        </div>
-        {actualModule.contents}
-        <div className={styles.bubble + styles.spacious}>
-          <ul className="list-disc list-inside">
-            <h2 className={styles.h3}>To Fix</h2>
-            <li>Get things working with the dropdown menus</li>
-            <li>Implement <a href="https://chakra-ui.com/docs/components/form-control">form control</a></li>
-            <li>Work with GPT to call the create route</li>
-            <li>Find the FIXME tag</li>
-            <li>Figure out why I can't edit the last row.  Must be an off-by-one error</li>
-            <li>Get the select lists to choose the right value when first rendered</li>
-          </ul>
-        </div>
-        {/* <div className="w-100 flex justify-center">{toolbar}</div> */}
-      </div>
+    <Center id='wrapper' p={10}>
+      <Box id="appContianer">
+        <AppRow id="header">
 
-    </main>
+          <Heading as={'h1'}>DBman Database Viewer</Heading>
+          <ColorModeButton />
+          <Center id="logoStrip" bg={'blackAlpha.700'} rounded={'full'} >
+            <Logo url={"/dbvb.svg"} alt="DBVB Logo" bgColor="black" />
+            <Logo url={"/react.svg"} alt="React Logo" />
+            <Logo url={"/vite.svg"} alt="Vite logo" />
+            <Logo url={"/chakraui-svgrepo-com.svg"} alt="ChakraUI" bgColor="white" />
+          </Center>
+        </AppRow>
+        <AppRow id="main">
+          {actualModule.contents}
+        </AppRow>
+        <AppRow id="footer" >
+          <TodoList />
+        </AppRow>
+      </Box>
+
+    </Center >
   )
 
 }
