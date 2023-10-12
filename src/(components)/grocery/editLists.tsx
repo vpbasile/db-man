@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
-import { tableData } from "../db-man/table";
-import DBTable from "../db-man/table";
+import { tableData } from "../db-man/DBTable";
+import DBTable from "../db-man/DBTable";
 
 export default function EditLists() {
   const [tableFields, SETtableFields] = useState<FileList>();

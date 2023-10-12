@@ -9,7 +9,6 @@ import {
 	Tr,
 	Th,
 	Td,
-	TableCaption,
 	TableContainer
 } from "@chakra-ui/table";
 
@@ -19,7 +18,7 @@ import {
 // ---------------------------------------------
 export type list = number;
 export type listMulti = number;
-export type tableData = string | number | boolean | list | listMulti;
+export type tableData = string | number | boolean | list | listMulti | undefined;
 export type fieldType = "string" | "number" | "boolean" | "list" | "list-multi" | "lookedUp" | "uid";
 export type field = {
 	labelText: string;
@@ -36,7 +35,7 @@ export type field = {
 export type fieldTuple = [string, field];
 export interface mysteryObject { [index: string]: tableData }
 export type optionTranslator = (arg0: string, arg1: mysteryObject[]) => optionForDropdown[];
-export type setter = React.Dispatch<any>;
+export type setter = React.Dispatch<any> | undefined;
 
 export type handlerTuple = [string, {
 	state: tableData;
@@ -49,7 +48,7 @@ type propsTable = {
 	dataContents: tableData[][];
 	fields: fieldTuple[];
 	editable?: boolean;
-	setTempData: (rowid: number) => void;
+	setTempData?: (rowid: number) => void;
 	handlers?: handlerTuple[]
 	newRowF?: (arg0: any) => void;
 }
@@ -135,7 +134,7 @@ export default function DBTable(props: propsTable) {
 	}
 	function cellEditButton(rowID: number) {
 		return (cellButton("Edit", () => {
-			setTempData(rowID)
+			(setTempData as (rowid: number) => void)(rowID)
 			selectForEdit(rowID)
 		}, "edit"))
 	}
@@ -156,7 +155,7 @@ export default function DBTable(props: propsTable) {
 	function rowDisplay(rowNum: number, rowValues: tableData[], isEditing: boolean, fields: fieldTuple[]) {
 		const rowKey = `row-${rowNum}`;
 		const iterableFields = Array.from(fields.entries())
-		if (isEditing) return rowEdit(rowNum, fields, handlers as handlerTuple[], false, rowValues)
+		if (isEditing) return rowEdit(rowNum, fields, handlers as handlerTuple[], rowValues)
 		else return (<Tr key={rowKey} id={rowKey}>
 			{/* Display cells */}
 			{iterableFields.map(([index, tuple]) => {
@@ -169,7 +168,7 @@ export default function DBTable(props: propsTable) {
 	* A row containing appropriate fields for each column.  If it's an existing rowm the fields are populated with data.  If it's new...
 	*/
 
-	function rowEdit(rowNum: number, fields: fieldTuple[], handlers: handlerTuple[], disabled?: boolean, rowValues?: tableData[]) {
+	function rowEdit(rowNum: number, fields: fieldTuple[], handlers: handlerTuple[], rowValues?: tableData[]) {
 		const rowKey = `row-${rowNum}`;
 		// console.log("fields", fields)
 		const iterable = Array.from(fields.entries())
@@ -215,17 +214,18 @@ export default function DBTable(props: propsTable) {
 	// <> Come back with the table
 	const tableID = "thisHouldBeTheTableName"
 	return (
-		<Table id={tableID}>
-			{tableHeader(fieldNames)}
-
-			<Tbody>
-				{data.map((contentsRow) => {
-					const numIndex = indexRow++;
-					return rowDisplay(numIndex, contentsRow, (numIndex === isEditing), fields);
-				})}
-				{(isEditing === null && editable) && createRow(0, fields)}
-				{(isEditing === 0 && editable) && rowEdit(indexRow, fields, handlers as handlerTuple[])}
-			</Tbody>
-		</Table>
+		<TableContainer>
+			<Table id={tableID}>
+				{tableHeader(fieldNames)}
+				<Tbody>
+					{data.map((contentsRow) => {
+						const numIndex = indexRow++;
+						return rowDisplay(numIndex, contentsRow, (numIndex === isEditing), fields);
+					})}
+					{(isEditing === null && editable) && createRow(0, fields)}
+					{(isEditing === 0 && editable) && rowEdit(indexRow, fields, handlers as handlerTuple[])}
+				</Tbody>
+			</Table>
+		</TableContainer>
 	);
 }

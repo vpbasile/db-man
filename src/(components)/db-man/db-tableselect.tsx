@@ -1,4 +1,4 @@
-import { fieldTuple, mysteryObject, optionTranslator, setter } from "./table";
+import { fieldTuple, mysteryObject, optionTranslator, setter } from "./DBTable";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 export type optionForDropdown = { value: number, label: string }
@@ -17,9 +17,10 @@ export default function ListSelect(props: propsType) {
     const fieldDef = tuple[1]
     const options: mysteryObject[] = fieldDef.choices as mysteryObject[]
     const translator = props.translator
-
+    const translatedOptions = options;
+    // if (translator) translatedOptions = translator(matchID, options)
+    // else translatedOptions = options
     const selectedOption = props.selectedOption;
-    const translatedOptions = translator(matchID, options)
     let i = 0;
     return (
         <>

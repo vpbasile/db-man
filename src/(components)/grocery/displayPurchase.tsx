@@ -1,8 +1,9 @@
 import { useState } from "react";
-import DBTable, { fieldTuple, handlerTuple, mysteryObject } from "../db-man/table";
+import DBTable, { fieldTuple, handlerTuple, mysteryObject } from "../db-man/DBTable";
 import { spoofData, headersForPurchases, purchasesToTable, purchaseType } from "./defs";
 import { optionForDropdown } from "../db-man/db-tableselect";
 import { Box, Heading } from "@chakra-ui/react";
+import DisplayTable from "../db-man/displayTable";
 
 export default function DisplayPurchase() {
 
@@ -99,6 +100,7 @@ export default function DisplayPurchase() {
 	// ---------------------------------------------
 	return (<Box>
 		<Heading as={'h2'}>Groceries</Heading>
+		<DisplayTable data={tableRows} fieldDefs={headersForPurchases} />
 		<DBTable dataContents={purchasesToTable(tableRows)} fields={tableFields} handlers={handlerBundle} editable={true} setTempData={setTempData} />
 	</Box>)
 

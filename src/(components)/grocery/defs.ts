@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { tableData, fieldTuple } from "../db-man/table";
+import { tableData, fieldTuple } from "../db-man/DBTable";
 
 export type dbRowsType = { [key: string]: tableData }[];
 export type purchaseType = {
@@ -13,7 +13,7 @@ export type purchaseType = {
 }
 
 export const headersForPurchases: fieldTuple[] = ([
-    ["product_id", { labelText: "Item", type: "list", order: 1, matchID: "product-list", listTable: "product", displayKey: "product_name" }],
+    ["product_name", { labelText: "Item", type: "list", order: 1, matchID: "product-list", listTable: "product", displayKey: "product_name" }],
     ["total_purchase_price", { labelText: "Total Price", type: "number", order: 2, matchID: "total-price" }],
     ["unit_name", { labelText: "Unit", type: "lookedUp", order: 3, matchID: "unit-name" }],
     ["unit_count", { labelText: "Count", type: "number", order: 4, matchID: "unit-count" }],
@@ -38,7 +38,7 @@ export const spoofData: purchaseType[] = [1, 2].map(rowNum => {
 export function purchasesToTable(datastate: dbRowsType): tableData[][] {
     return datastate.map((row) => {
         return ([
-            row.product_name,
+            row.p,
             row.total_purchase_price,
             row.unit_name,
             row.unit_count,
